@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ESP32 Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1117;
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    h1 { font-size: 22px; font-weight: 500; color: #fff; margin-bottom: 0.25rem; }
+    .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 2rem; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: #1a1d27;
+      border: 0.5px solid #2a2d3a;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+    }
+    .card-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card-value { font-size: 26px; font-weight: 500; color: #fff; }
+    .card-unit  { font-size: 13px; color: #6b7280; margin-left: 3px; }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      display: inline-block;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .alerta {
+      background: #2d1a1a;
+      border: 0.5px solid #7f1d1d;
+      border-radius: 12px;
+      padding: 0.75rem 1.25rem;
+      color: #fca5a5;
+      font-size: 13px;
+      margin-bottom: 2rem;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .alerta.visible { display: flex; }
+
+    .led-section {
+      background: #1a1d27;
+      border: 0.5px solid #2a2d3a;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .led-info { display: flex; align-items: center; gap: 16px; }
+    .led-bulb {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: #2a2d3a;
+      border: 2px solid #3a3d4a;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      transition: all 0.3s;
+    }
+    .led-bulb.on { background: #fbbf24; border-color: #f59e0b; }
+    .led-text h3 { font-size: 15px; font-weight: 500; color: #fff; }
+    .led-text p  { font-size: 12px; color: #6b7280; margin-top: 2px; }
+
+    .led-controles { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn {
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      border: 0.5px solid #3a3d4a;
+      background: #252836;
+      color: #e0e0e0;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: #2e3148; }
+    .btn.active-on  { background: #f59e0b22; border-color: #f59e0b; color: #fbbf24; }
+    .btn.active-off { background: #37415122; border-color: #374151; color: #9ca3af; }
+
+    .grafico-section {
+      background: #1a1d27;
+      border: 0.5px solid #2a2d3a;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+    .section-header h2 { font-size: 15px; font-weight: 500; color: #fff; }
+    .badge {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: #1e3a2e;
+      color: #4ade80;
+      border: 0.5px solid #166534;
+    }
+    .badge-alerta {
+      background: #2d1a1a;
+      color: #fca5a5;
+      border-color: #7f1d1d;
+    }
+
+    .chart-wrap { position: relative; height: 260px; }
+
+    .tabla-section {
+      background: #1a1d27;
+      border: 0.5px solid #2a2d3a;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      color: #6b7280;
+      font-weight: 400;
+      border-bottom: 0.5px solid #2a2d3a;
+    }
+    tbody tr { border-bottom: 0.5px solid #1e2130; transition: background 0.15s; }
+    tbody tr:hover { background: #20233a; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td { padding: 0.6rem 0.75rem; color: #d1d5db; }
+
+    .pill { font-size: 11px; padding: 2px 8px; border-radius: 20px; }
+    .pill-on     { background: #1e3a2e; color: #4ade80; border: 0.5px solid #166534; }
+    .pill-off    { background: #1e2130; color: #6b7280; border: 0.5px solid #2a2d3a; }
+    .pill-alerta { background: #2d1a1a; color: #fca5a5; border: 0.5px solid #7f1d1d; }
+    .empty { text-align: center; color: #4b5563; padding: 2rem; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+  <h1>ESP32 Dashboard</h1>
+  <p class="subtitle">Sensor HC-SR04 + Control LED &mdash; Tiempo real</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-label"><span class="status-dot"></span> Distancia actual</div>
+      <div class="card-value" id="dist-actual">--<span class="card-unit">cm</span></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Ultima lectura</div>
+      <div class="card-value" style="font-size:17px" id="ultima-hora">--</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Total lecturas</div>
+      <div class="card-value" id="total">0</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Distancia minima</div>
+      <div class="card-value" id="dist-min">--<span class="card-unit">cm</span></div>
+    </div>
+  </div>
+
+  <div class="alerta" id="alerta">
+    &#9888; Objeto a menos de 20 cm &mdash; LED encendido automaticamente
+  </div>
+
+  <div class="led-section">
+    <div class="led-info">
+      <div class="led-bulb" id="led-bulb">&#128161;</div>
+      <div class="led-text">
+        <h3>Control LED &mdash; GPIO 27</h3>
+        <p id="led-texto">Estado: apagado</p>
+      </div>
+    </div>
+    <div class="led-controles">
+      <button class="btn" id="btn-on"  onclick="setLed(true)">Encender</button>
+      <button class="btn" id="btn-off" onclick="setLed(false)">Apagar</button>
+    </div>
+  </div>
+
+  <div class="grafico-section">
+    <div class="section-header">
+      <h2>Distancia vs tiempo</h2>
+      <span class="badge" id="badge-grafico">0 puntos</span>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="grafico"></canvas>
+    </div>
+  </div>
+
+  <div class="tabla-section">
+    <div class="section-header">
+      <h2>Historial de lecturas</h2>
+      <span class="badge" id="badge-tabla">0 registros</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Hora</th>
+          <th>Distancia</th>
+          <th>LED</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-body">
+        <tr><td colspan="5" class="empty">Esperando datos del ESP32...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<script>
+  let ledActual = false;
+  let historial = [];
+  let distMin = Infinity;
+  let contador = 0;
+
+  const ctx = document.getElementById('grafico').getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Distancia (cm)',
+        data: [],
+        borderColor: '#378add',
+        backgroundColor: 'rgba(55,138,221,0.08)',
+        borderWidth: 2,
+        pointRadius: 3,
+        pointBackgroundColor: [],
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#9ca3af', font: { size: 12 } } },
+        tooltip: {
+          callbacks: {
+            label: ctx => ctx.parsed.y.toFixed(1) + ' cm'
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#6b7280', font: { size: 11 } },
+          grid:  { color: '#1e2130' }
+        },
+        y: {
+          min: 0,
+          ticks: {
+            color: '#6b7280',
+            font: { size: 11 },
+            callback: v => v + ' cm'
+          },
+          grid: { color: '#1e2130' }
+        }
+      }
+    }
+  });
+
+  function actualizarGrafico(data) {
+    const ds = chart.data.datasets[0];
+    const cerca = parseFloat(data.distancia) < 20;
+
+    chart.data.labels.push(data.hora);
+    ds.data.push(parseFloat(data.distancia));
+    ds.pointBackgroundColor.push(cerca ? '#ef4444' : '#378add');
+
+    if (chart.data.labels.length > 30) {
+      chart.data.labels.shift();
+      ds.data.shift();
+      ds.pointBackgroundColor.shift();
+    }
+
+    document.getElementById('badge-grafico').textContent =
+      chart.data.labels.length + ' puntos';
+
+    chart.update();
+  }
+
+  function actualizarLedUI(estado) {
+    ledActual = estado;
+    const bulb  = document.getElementById('led-bulb');
+    const texto = document.getElementById('led-texto');
+    const btnOn  = document.getElementById('btn-on');
+    const btnOff = document.getElementById('btn-off');
+
+    if (estado) {
+      bulb.classList.add('on');
+      texto.textContent = 'Estado: encendido';
+      btnOn.classList.add('active-on');
+      btnOff.classList.remove('active-off');
+    } else {
+      bulb.classList.remove('on');
+      texto.textContent = 'Estado: apagado';
+      btnOff.classList.add('active-off');
+      btnOn.classList.remove('active-on');
+    }
+  }
+
+  async function setLed(estado) {
+    actualizarLedUI(estado);
+    try {
+      await fetch('/led', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ led: estado })
+      });
+    } catch(e) { console.error('Error LED:', e); }
+  }
+
+  function actualizarUI(data) {
+    if (!data || !data.distancia) return;
+
+    const dist = parseFloat(data.distancia);
+    const hora = new Date().toLocaleTimeString('es-PE');
+    const cerca = dist < 20;
+
+    contador++;
+    if (dist < distMin) distMin = dist;
+
+    document.getElementById('dist-actual').innerHTML =
+      dist.toFixed(1) + '<span class="card-unit">cm</span>';
+    document.getElementById('ultima-hora').textContent = hora;
+    document.getElementById('total').textContent = contador;
+    document.getElementById('dist-min').innerHTML =
+      distMin.toFixed(1) + '<span class="card-unit">cm</span>';
+
+    document.getElementById('alerta').classList.toggle('visible', cerca);
+    actualizarLedUI(data.led || false);
+
+    const entrada = { n: contador, hora, dist: dist.toFixed(1), led: data.led, cerca };
+    actualizarGrafico({ ...entrada, hora });
+
+    historial.unshift(entrada);
+    if (historial.length > 50) historial.pop();
+    renderTabla();
+  }
+
+  function renderTabla() {
+    const tbody = document.getElementById('tabla-body');
+    document.getElementById('badge-tabla').textContent =
+      historial.length + ' registros';
+
+    if (!historial.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty">Sin datos aun</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = historial.map(r => {
+      const ledPill    = r.led
+        ? '<span class="pill pill-on">ON</span>'
+        : '<span class="pill pill-off">OFF</span>';
+      const estadoPill = r.cerca
+        ? '<span class="pill pill-alerta">Cerca</span>'
+        : '<span class="pill pill-off">Normal</span>';
+      return `<tr>
+        <td style="color:#4b5563">${r.n}</td>
+        <td>${r.hora}</td>
+        <td style="color:#fff;font-weight:500">${r.dist} cm</td>
+        <td>${ledPill}</td>
+        <td>${estadoPill}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function fetchDatos() {
+    try {
+      const res = await fetch('/datos');
+      if (res.ok) actualizarUI(await res.json());
+    } catch(e) {}
+  }
+
+  async function fetchLed() {
+    try {
+      const res = await fetch('/led');
+      if (res.ok) {
+        const d = await res.json();
+        actualizarLedUI(d.led);
+      }
+    } catch(e) {}
+  }
+
+  fetchLed();
+  fetchDatos();
+  setInterval(fetchDatos, 2000);
+</script>
+</body>
+</html>
