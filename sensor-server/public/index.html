@@ -30,122 +30,91 @@
       padding: 1rem 1.25rem;
     }
     .card-label {
-      font-size: 12px;
-      color: #6b7280;
+      font-size: 12px; color: #6b7280;
       margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      display: flex; align-items: center; gap: 6px;
     }
     .card-value { font-size: 26px; font-weight: 500; color: #fff; }
     .card-unit  { font-size: 13px; color: #6b7280; margin-left: 3px; }
 
     .status-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: #22c55e;
-      display: inline-block;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #22c55e; display: inline-block;
       animation: pulse 2s infinite;
     }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
     .alerta {
-      background: #2d1a1a;
-      border: 0.5px solid #7f1d1d;
-      border-radius: 12px;
-      padding: 0.75rem 1.25rem;
-      color: #fca5a5;
-      font-size: 13px;
+      background: #2d1a1a; border: 0.5px solid #7f1d1d;
+      border-radius: 12px; padding: 0.75rem 1.25rem;
+      color: #fca5a5; font-size: 13px;
       margin-bottom: 2rem;
-      display: none;
-      align-items: center;
-      gap: 8px;
+      display: none; align-items: center; gap: 8px;
     }
     .alerta.visible { display: flex; }
 
     .led-section {
-      background: #1a1d27;
-      border: 0.5px solid #2a2d3a;
-      border-radius: 12px;
-      padding: 1.5rem;
+      background: #1a1d27; border: 0.5px solid #2a2d3a;
+      border-radius: 12px; padding: 1.5rem;
       margin-bottom: 2rem;
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
+      flex-wrap: wrap; gap: 1rem;
     }
     .led-info { display: flex; align-items: center; gap: 16px; }
     .led-bulb {
-      width: 48px; height: 48px;
-      border-radius: 50%;
-      background: #2a2d3a;
-      border: 2px solid #3a3d4a;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: #2a2d3a; border: 2px solid #3a3d4a;
       display: flex; align-items: center; justify-content: center;
-      font-size: 24px;
-      transition: all 0.3s;
+      font-size: 24px; transition: all 0.3s;
     }
-    .led-bulb.on { background: #fbbf24; border-color: #f59e0b; }
+    .led-bulb.on {
+      background: #fbbf24; border-color: #f59e0b;
+      box-shadow: 0 0 20px #f59e0b55;
+    }
     .led-text h3 { font-size: 15px; font-weight: 500; color: #fff; }
-    .led-text p  { font-size: 12px; color: #6b7280; margin-top: 2px; }
+    .led-text p  { font-size: 12px; color: #6b7280; margin-top: 3px; }
 
-    .led-controles { display: flex; gap: 8px; flex-wrap: wrap; }
-    .btn {
-      padding: 0.6rem 1.25rem;
-      border-radius: 8px;
-      border: 0.5px solid #3a3d4a;
-      background: #252836;
-      color: #e0e0e0;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.2s;
+    .switch-wrap { display: flex; align-items: center; gap: 10px; }
+    .switch-label { font-size: 13px; color: #9ca3af; min-width: 28px; }
+    .switch { position: relative; width: 52px; height: 28px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #374151; border-radius: 28px;
+      transition: 0.3s;
     }
-    .btn:hover { background: #2e3148; }
-    .btn.active-on  { background: #f59e0b22; border-color: #f59e0b; color: #fbbf24; }
-    .btn.active-off { background: #37415122; border-color: #374151; color: #9ca3af; }
+    .slider:before {
+      position: absolute; content: "";
+      height: 20px; width: 20px;
+      left: 4px; bottom: 4px;
+      background: #fff; border-radius: 50%;
+      transition: 0.3s;
+    }
+    input:checked + .slider { background: #22c55e; }
+    input:checked + .slider:before { transform: translateX(24px); }
 
-    .grafico-section {
-      background: #1a1d27;
-      border: 0.5px solid #2a2d3a;
-      border-radius: 12px;
-      padding: 1.5rem;
+    .section {
+      background: #1a1d27; border: 0.5px solid #2a2d3a;
+      border-radius: 12px; padding: 1.5rem;
       margin-bottom: 2rem;
     }
     .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.25rem;
+      display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 1.25rem;
     }
     .section-header h2 { font-size: 15px; font-weight: 500; color: #fff; }
     .badge {
-      font-size: 11px;
-      padding: 3px 10px;
-      border-radius: 20px;
-      background: #1e3a2e;
-      color: #4ade80;
-      border: 0.5px solid #166534;
+      font-size: 11px; padding: 3px 10px; border-radius: 20px;
+      background: #1e3a2e; color: #4ade80; border: 0.5px solid #166534;
     }
-    .badge-alerta {
-      background: #2d1a1a;
-      color: #fca5a5;
-      border-color: #7f1d1d;
-    }
-
     .chart-wrap { position: relative; height: 260px; }
 
-    .tabla-section {
-      background: #1a1d27;
-      border: 0.5px solid #2a2d3a;
-      border-radius: 12px;
-      padding: 1.5rem;
-    }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     thead th {
-      text-align: left;
-      padding: 0.5rem 0.75rem;
-      color: #6b7280;
-      font-weight: 400;
+      text-align: left; padding: 0.5rem 0.75rem;
+      color: #6b7280; font-weight: 400;
       border-bottom: 0.5px solid #2a2d3a;
     }
     tbody tr { border-bottom: 0.5px solid #1e2130; transition: background 0.15s; }
@@ -163,7 +132,7 @@
 <body>
 
   <h1>ESP32 Dashboard</h1>
-  <p class="subtitle">Sensor HC-SR04 + Control LED &mdash; Tiempo real</p>
+  <p class="subtitle">Sensor HC-SR04 + Control LED — Tiempo real</p>
 
   <div class="cards">
     <div class="card">
@@ -185,26 +154,29 @@
   </div>
 
   <div class="alerta" id="alerta">
-    &#9888; Objeto a menos de 20 cm &mdash; LED encendido automaticamente
+    &#9888; Objeto a menos de 20 cm — LED encendido automaticamente
   </div>
 
   <div class="led-section">
     <div class="led-info">
       <div class="led-bulb" id="led-bulb">&#128161;</div>
       <div class="led-text">
-        <h3>Control LED &mdash; GPIO 27</h3>
-        <p id="led-texto">Estado: apagado</p>
+        <h3>LED — GPIO 27</h3>
+        <p id="led-texto">Interruptor apagado — LED inactivo</p>
       </div>
     </div>
-    <div class="led-controles">
-      <button class="btn" id="btn-on"  onclick="setLed(true)">Encender</button>
-      <button class="btn" id="btn-off" onclick="setLed(false)">Apagar</button>
+    <div class="switch-wrap">
+      <span class="switch-label" id="switch-label">OFF</span>
+      <label class="switch">
+        <input type="checkbox" id="toggle" onchange="cambiarInterruptor()">
+        <span class="slider"></span>
+      </label>
     </div>
   </div>
 
-  <div class="grafico-section">
+  <div class="section">
     <div class="section-header">
-      <h2>Distancia vs tiempo</h2>
+      <h2>Distancia vs Tiempo</h2>
       <span class="badge" id="badge-grafico">0 puntos</span>
     </div>
     <div class="chart-wrap">
@@ -212,7 +184,7 @@
     </div>
   </div>
 
-  <div class="tabla-section">
+  <div class="section">
     <div class="section-header">
       <h2>Historial de lecturas</h2>
       <span class="badge" id="badge-tabla">0 registros</span>
@@ -220,11 +192,7 @@
     <table>
       <thead>
         <tr>
-          <th>#</th>
-          <th>Hora</th>
-          <th>Distancia</th>
-          <th>LED</th>
-          <th>Estado</th>
+          <th>#</th><th>Hora</th><th>Distancia</th><th>LED</th><th>Estado</th>
         </tr>
       </thead>
       <tbody id="tabla-body">
@@ -234,11 +202,13 @@
   </div>
 
 <script>
-  let ledActual = false;
-  let historial = [];
-  let distMin = Infinity;
-  let contador = 0;
+  let interruptorActivo = false;
+  let historialLocal    = [];
+  let distMin           = Infinity;
+  let contador          = 0;
+  let ultimaHora        = '';
 
+  // --- Gráfico ---
   const ctx = document.getElementById('grafico').getContext('2d');
   const chart = new Chart(ctx, {
     type: 'line',
@@ -250,8 +220,9 @@
         borderColor: '#378add',
         backgroundColor: 'rgba(55,138,221,0.08)',
         borderWidth: 2,
-        pointRadius: 3,
+        pointRadius: 4,
         pointBackgroundColor: [],
+        pointBorderColor: [],
         tension: 0.3,
         fill: true
       }]
@@ -259,24 +230,23 @@
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      animation: false,
       plugins: {
         legend: { labels: { color: '#9ca3af', font: { size: 12 } } },
         tooltip: {
-          callbacks: {
-            label: ctx => ctx.parsed.y.toFixed(1) + ' cm'
-          }
+          callbacks: { label: c => c.parsed.y.toFixed(1) + ' cm' }
         }
       },
       scales: {
         x: {
-          ticks: { color: '#6b7280', font: { size: 11 } },
+          ticks: { color: '#6b7280', font: { size: 11 }, maxTicksLimit: 10 },
           grid:  { color: '#1e2130' }
         },
         y: {
           min: 0,
+          suggestedMax: 100,
           ticks: {
-            color: '#6b7280',
-            font: { size: 11 },
+            color: '#6b7280', font: { size: 11 },
             callback: v => v + ' cm'
           },
           grid: { color: '#1e2130' }
@@ -285,96 +255,125 @@
     }
   });
 
-  function actualizarGrafico(data) {
-    const ds = chart.data.datasets[0];
-    const cerca = parseFloat(data.distancia) < 20;
-
-    chart.data.labels.push(data.hora);
-    ds.data.push(parseFloat(data.distancia));
-    ds.pointBackgroundColor.push(cerca ? '#ef4444' : '#378add');
-
+  function agregarPuntoGrafico(dist, hora, cerca) {
+    const ds    = chart.data.datasets[0];
+    const color = cerca ? '#ef4444' : '#378add';
+    chart.data.labels.push(hora);
+    ds.data.push(dist);
+    ds.pointBackgroundColor.push(color);
+    ds.pointBorderColor.push(color);
     if (chart.data.labels.length > 30) {
       chart.data.labels.shift();
       ds.data.shift();
       ds.pointBackgroundColor.shift();
+      ds.pointBorderColor.shift();
     }
-
     document.getElementById('badge-grafico').textContent =
       chart.data.labels.length + ' puntos';
-
     chart.update();
   }
 
-  function actualizarLedUI(estado) {
-    ledActual = estado;
-    const bulb  = document.getElementById('led-bulb');
-    const texto = document.getElementById('led-texto');
-    const btnOn  = document.getElementById('btn-on');
-    const btnOff = document.getElementById('btn-off');
-
-    if (estado) {
-      bulb.classList.add('on');
-      texto.textContent = 'Estado: encendido';
-      btnOn.classList.add('active-on');
-      btnOff.classList.remove('active-off');
-    } else {
-      bulb.classList.remove('on');
-      texto.textContent = 'Estado: apagado';
-      btnOff.classList.add('active-off');
-      btnOn.classList.remove('active-on');
-    }
-  }
-
-  async function setLed(estado) {
-    actualizarLedUI(estado);
+  async function cambiarInterruptor() {
+    interruptorActivo = document.getElementById('toggle').checked;
+    actualizarUIInterruptor();
     try {
       await fetch('/led', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ led: estado })
+        body: JSON.stringify({ led: interruptorActivo })
       });
-    } catch(e) { console.error('Error LED:', e); }
+    } catch(e) { console.error('Error toggle:', e); }
   }
 
-  function actualizarUI(data) {
-    if (!data || !data.distancia) return;
+  function actualizarUIInterruptor() {
+    document.getElementById('switch-label').textContent =
+      interruptorActivo ? 'ON' : 'OFF';
+    if (!interruptorActivo) {
+      document.getElementById('led-bulb').classList.remove('on');
+      document.getElementById('led-texto').textContent =
+        'Interruptor apagado — LED inactivo';
+    } else {
+      document.getElementById('led-texto').textContent =
+        'Interruptor ON — LED responde a distancia';
+    }
+  }
 
-    const dist = parseFloat(data.distancia);
-    const hora = new Date().toLocaleTimeString('es-PE');
-    const cerca = dist < 20;
+  function actualizarLedBulb(ledFinal) {
+    const bulb  = document.getElementById('led-bulb');
+    const texto = document.getElementById('led-texto');
+    if (ledFinal) {
+      bulb.classList.add('on');
+      texto.textContent = 'LED encendido — objeto cerca';
+    } else if (interruptorActivo) {
+      bulb.classList.remove('on');
+      texto.textContent = 'Interruptor ON — esperando objeto cerca';
+    } else {
+      bulb.classList.remove('on');
+      texto.textContent = 'Interruptor apagado — LED inactivo';
+    }
+  }
 
-    contador++;
-    if (dist < distMin) distMin = dist;
+  async function fetchDatos() {
+    try {
+      const res = await fetch('/datos');
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!data || data.distancia === undefined) return;
 
-    document.getElementById('dist-actual').innerHTML =
-      dist.toFixed(1) + '<span class="card-unit">cm</span>';
-    document.getElementById('ultima-hora').textContent = hora;
-    document.getElementById('total').textContent = contador;
-    document.getElementById('dist-min').innerHTML =
-      distMin.toFixed(1) + '<span class="card-unit">cm</span>';
+      const dist  = parseFloat(data.distancia);
+      const hora  = data.hora || new Date().toLocaleTimeString('es-PE');
+      const led   = data.led  || false;
+      const cerca = dist < 20;
 
-    document.getElementById('alerta').classList.toggle('visible', cerca);
-    actualizarLedUI(data.led || false);
+      // Evitar duplicados si no hay dato nuevo
+      if (hora === ultimaHora) return;
+      ultimaHora = hora;
 
-    const entrada = { n: contador, hora, dist: dist.toFixed(1), led: data.led, cerca };
-    actualizarGrafico({ ...entrada, hora });
+      contador++;
+      if (dist < distMin) distMin = dist;
 
-    historial.unshift(entrada);
-    if (historial.length > 50) historial.pop();
-    renderTabla();
+      document.getElementById('dist-actual').innerHTML =
+        dist.toFixed(1) + '<span class="card-unit">cm</span>';
+      document.getElementById('ultima-hora').textContent = hora;
+      document.getElementById('total').textContent = contador;
+      document.getElementById('dist-min').innerHTML =
+        distMin.toFixed(1) + '<span class="card-unit">cm</span>';
+
+      document.getElementById('alerta').classList.toggle(
+        'visible', cerca && interruptorActivo
+      );
+
+      actualizarLedBulb(led);
+      agregarPuntoGrafico(dist, hora, cerca);
+
+      historialLocal.unshift({ n: contador, hora, dist: dist.toFixed(1), led, cerca });
+      if (historialLocal.length > 50) historialLocal.pop();
+      renderTabla();
+
+    } catch(e) { console.error('Error fetch:', e); }
+  }
+
+  async function fetchInterruptor() {
+    try {
+      const res = await fetch('/led');
+      if (!res.ok) return;
+      const data = await res.json();
+      interruptorActivo = data.led;
+      document.getElementById('toggle').checked = interruptorActivo;
+      actualizarUIInterruptor();
+    } catch(e) {}
   }
 
   function renderTabla() {
     const tbody = document.getElementById('tabla-body');
     document.getElementById('badge-tabla').textContent =
-      historial.length + ' registros';
-
-    if (!historial.length) {
-      tbody.innerHTML = '<tr><td colspan="5" class="empty">Sin datos aun</td></tr>';
+      historialLocal.length + ' registros';
+    if (!historialLocal.length) {
+      tbody.innerHTML =
+        '<tr><td colspan="5" class="empty">Sin datos aun</td></tr>';
       return;
     }
-
-    tbody.innerHTML = historial.map(r => {
+    tbody.innerHTML = historialLocal.map(r => {
       const ledPill    = r.led
         ? '<span class="pill pill-on">ON</span>'
         : '<span class="pill pill-off">OFF</span>';
@@ -391,24 +390,7 @@
     }).join('');
   }
 
-  async function fetchDatos() {
-    try {
-      const res = await fetch('/datos');
-      if (res.ok) actualizarUI(await res.json());
-    } catch(e) {}
-  }
-
-  async function fetchLed() {
-    try {
-      const res = await fetch('/led');
-      if (res.ok) {
-        const d = await res.json();
-        actualizarLedUI(d.led);
-      }
-    } catch(e) {}
-  }
-
-  fetchLed();
+  fetchInterruptor();
   fetchDatos();
   setInterval(fetchDatos, 2000);
 </script>
